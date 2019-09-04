@@ -1,0 +1,58 @@
+---
+title: "Assignmen 1 - Mushroom Data"
+author: "Sadia Perveen"
+date: "9/3/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r mushroom data}
+mushroomData <- read.table("https://raw.githubusercontent.com/sadia-perveen/R-Assignments/master/agaricus-lepiota.data", sep =",", header = FALSE)
+
+summary(mushroomData)
+
+mushroomData$V1 <- as.character(mushroomData$V1)
+mushroomData$V2 <- as.character(mushroomData$V2)
+mushroomData$V3 <- as.character(mushroomData$V3)
+mushroomData$V4 <- as.character(mushroomData$V4)
+
+mushroomData$V1[mushroomData$V1 =="p"] <- "poisonous"  
+mushroomData$V1[mushroomData$V1 =="e"] <- "edible"
+
+mushroomData$V2[mushroomData$V2 =="b"] <- "bell"
+mushroomData$V2[mushroomData$V2 =="c"] <- "conical"
+mushroomData$V2[mushroomData$V2 =="x"] <- "convex"
+mushroomData$V2[mushroomData$V2 =="f"] <- "flat"
+mushroomData$V2[mushroomData$V2 =="k"] <- "knobbed"
+mushroomData$V2[mushroomData$V2 =="s"] <- "sunken"
+
+mushroomData$V3[mushroomData$V3 =="f"] <- "fibrous"
+mushroomData$V3[mushroomData$V3 =="g"] <- "grooves"
+mushroomData$V3[mushroomData$V3 =="y"] <- "scaly"
+mushroomData$V3[mushroomData$V3 =="s"] <- "smooth"
+
+mushroomData$V4[mushroomData$V4 =="n"] <- "brown"
+mushroomData$V4[mushroomData$V4 =="b"] <- "buff"
+mushroomData$V4[mushroomData$V4 =="c"] <- "cinnamon"
+mushroomData$V4[mushroomData$V4 =="g"] <- "gray"
+mushroomData$V4[mushroomData$V4 =="r"] <- "green"
+mushroomData$V4[mushroomData$V4 =="p"] <- "pink"
+mushroomData$V4[mushroomData$V4 =="u"] <- "purple"
+mushroomData$V4[mushroomData$V4 =="e"] <- "red"
+mushroomData$V4[mushroomData$V4 =="w"] <- "white"
+mushroomData$V4[mushroomData$V4 =="y"] <- "yellow"
+
+
+final_data <- data.frame(mushroomData$V1, mushroomData$V2, mushroomData$V3, mushroomData$V4)
+names(final_data) <- c("mushroomEdible", "CapShape", "CapSurface", "CapColor")
+plot(final_data$mushroomEdible)
+plot(final_data$CapColor)
+summary(final_data)
+head(final_data, 20) 
+```
