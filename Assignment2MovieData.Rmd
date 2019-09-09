@@ -1,0 +1,40 @@
+---
+title: "Movie Assignment 2"
+author: "Sadia Perveen"
+date: "9/8/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("RMariaDB",repos = "http://cran.us.r-project.org")
+library(RMariaDB)
+```
+Following packages need to be installed:
+install.packages("RMariaDB")
+library(RMariaDB)
+
+You must indicate your localuserpassword, user, and hostName
+
+```{r}
+
+localuserpassword = ''
+user = 'user'
+hostName = 'localhost'
+moviesDB <- dbConnect(RMariaDB::MariaDB(), user=user, password=localuserpassword, dbname='MovieRatingsAssignment2', host=hostName)
+
+query<-paste("select * from MovieRatingView order by Movie, Friend",sep="")
+print(query)
+
+dc = dbSendQuery(moviesDB,query)
+ratingData<-data.frame(dbFetch(dc))
+dbDisconnect(moviesDB)
+avgData = aggregate(ratingData$Rating, list(ratingData$Movie), mean)
+ratingData
+avgData
+barplot(avgData$x, names = avgData$Group.1,
+        xlab = "Movie", ylab = "Avg Rating",
+        main = "Average Rating of Movies From Friends", las=2, cex.names=.5, col=c("darkblue","green"))
+
+```
+
