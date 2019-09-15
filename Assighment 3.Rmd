@@ -1,0 +1,129 @@
+---
+title: "DATA607 - Homerwork 3 Ch. 8"
+author: "Sadia Perveen"
+date: "9/15/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stringr)
+```
+3. Copy the introductory example. The vector name stores the extracted names.
+R> name
+  [1] "Moe Szyslak" "Burns, C. Montgomery" "Rev. Timothy Lovejoy"
+  [4] "Ned Flanders" "Simpson, Homer" "Dr. Julius Hibbert"
+(a) Use the tools of this chapter to rearrange the vector so that all elements conform to
+the standard first_name last_name.
+
+(b) Construct a logical vector indicating whether a character has a title (i.e., Rev. and
+Dr.).
+
+(c) Construct a logical vector indicating whether a character has a second name.
+```{r}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+```
+3. Copy the introductory example. The vector name stores the extracted names.
+R> name
+  [1] "Moe Szyslak" "Burns, C. Montgomery" "Rev. Timothy Lovejoy"
+  [4] "Ned Flanders" "Simpson, Homer" "Dr. Julius Hibbert"
+  
+Extrating names, we use the following regex '[[:alpha:]., ]{2,}'
+[:alpha:] is to indicate all letters in the alphabet, we add ., and ' ' in the our regex, as names can contain a period, comma, or a space along with the letters. Finally we indicated a quantifier {min, max}, but only indicated a min value of 2, and max of none. This way our extraction will only occur if there is a minimun of two vaules found with our regex. This prevents the extraction of all single characters. 
+```{r}
+name <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}"))
+name
+```
+3(a) Use the tools of this chapter to rearrange the vector so that all elements conform to
+the standard first_name last_name.
+
+  1. Seperate out the first names regex desc (used str_extract to get just the first occurrence)
+    a. all letters at least 3 letters before a space
+    b. space then at least 3 letters
+    c. do a str_extract on the extractaction in a and b to get only letters
+  2. Seperate out the last names
+    a. at least 1 letter followed by a comma
+    b. end of word followed by a space than atleast 3 letters
+    c. extract a and b to get only letters
+  3. Combine first and last name 
+    a. concatinate firstName and lastName with space in between to get a dataframe with 'firstname lastname' format
+```{r}
+firstName <- str_extract(str_extract(name, "[[:alpha:]]{3,} | [[:alpha:]]{3,}"), "[[:alpha:]]{1,}")
+firstName
+
+lastName <- str_extract(str_extract(name, "[[:alpha:]]{1,}\\,|\\b [[:alpha:]]{3,}"), "[[:alpha:]]{1,}")
+lastName
+
+fullName <- data.frame(name = paste(firstName," ",lastName))
+fullName
+```
+3(b) Construct a logical vector indicating whether a character has a title (i.e., Rev. and
+Dr.).
+  Use str_detect to determine the following regex: at least 2 letters with a period at the end.
+```{r}
+title <- data.frame(fullName = name, hasTitle = str_detect(name, "[:alpha:]{2,}\\."))
+title
+```
+3(c) Construct a logical vector indicating whether a character has a second name.
+  use str_detect to determing the following regex: exactly 1 letter after a space and ending with a period
+```{r}
+secondName <- data.frame(fullName = name, hasSecondName = str_detect(name, " [:alpha:]{1}\\."))
+secondName
+```
+
+4. Describe the types of strings that conform to the following regular expressions and
+construct an example that is matched by the regular expression.
+  (a) [0-9]+\\$ - any amount of numbers then a dollar sign. ex."123$dajfk." match = "123$" 
+```{r}
+myExample <- "123$dajfk."
+result <- str_extract(myExample, "[0-9]+\\$")
+result
+```
+  
+  (b) \\b[a-z]{1,4}\\b - pattern that begins at the end of a word, all lowercase, exactly a lenght of 4 with and ending. ex. "WHAT that is?" match = "that"
+```{r}
+myExample2 <- "WHAT that is?"
+result2 <- str_extract(myExample2, "\\b[a-z]{1,4}\\b")
+result2
+```
+  
+  (c) .*?\\.txt$ - string that ends in .txt
+```{r}
+myExample3 <- "blability blam23jkd akfda.jpg fjdskf.txt"
+result3 <-  str_extract(myExample3, ".*?\\.txt$")
+result3
+```
+  
+  (d) \\d{2}/\\d{2}/\\d{4} - will extract any digits formatted like so: dd/dd/dddd
+```{r}
+myExample4 <- "2131fjdksa 323 09/15/2019riew83"
+result4 <- str_extract(myExample4, "\\d{2}/\\d{2}/\\d{4}")
+result4
+```
+  
+  (e) <(.+?)>.+?</\\1> - any string starting with <some text> and ending with </some text>
+```{r}
+myExample5 <- "<p> blah blah paragraph </p> daslj212 !jlsakjf"
+result5 <- str_extract(myExample5, "<(.+?)>.+?</\\1>")
+result5
+```
+  
+9. The following code hides a secret message. Crack it with R and regular expressions.
+Hint: Some of the characters are more revealing than others! The code snippet is also
+available in the materials at www.r-datacollection.com.
+clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanwo
+Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO
+d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5
+fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr
+```{r}
+encoded <- "clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanwo
+Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO
+d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5
+fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+
+decoded <- str_replace_all(paste0(unlist(str_extract_all(encoded, "[[A-Z][:punct:]]")), collapse = ""), "\\.", "\\ ")
+decoded 
+
+```
