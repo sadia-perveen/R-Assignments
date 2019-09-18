@@ -1,0 +1,14 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+install.packages("openintro")
+library(openintro)
+
+treeDiag(c('Can construct box plots?', 'Passed?'),
+         c(0.80, 0.20), list(c(0.86, 0.14), c(0.65, 0.35)),
+         solSub=list(c("(a)0.8*0.86 = 0.688", "(b)0.8*0.14 = 0.112"), c("(c)0.2*0.65 = 0.13", "(d)0.2*0.35 = 0.07")), solwd=0.20)
+```
+
+
